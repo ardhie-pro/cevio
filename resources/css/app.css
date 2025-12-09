@@ -1,0 +1,4 @@
+@tailwind base;
+@import "bootstrap/dist/css/bootstrap.min.css";
+@tailwind components;
+@tailwind utilities;
