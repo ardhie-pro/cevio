@@ -9,7 +9,13 @@ class Pemasukan extends Model
     protected $fillable = [
         'event_id',
         'nominal',
-        'keterangan'
+        'keterangan',
+        'type',
+        'tanggal',
+        'metode',
+        'nama_pengirim',
+        'bukti_tf',
+        'approval'
     ];
 
     public function event()

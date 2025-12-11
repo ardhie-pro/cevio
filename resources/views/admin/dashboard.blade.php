@@ -21,18 +21,10 @@
                 <thead class="table-primary">
                     <tr>
                         <th>No</th>
-                        <th>Project Manager</th>
-                        <th>Client</th>
                         <th>Nama Event</th>
-                        <th>Lokasi</th>
-                        <th>Nilai Project</th>
+                        <th>Nama Client</th>
                         <th>Mulai Pelaksanaan</th>
-                        <th>Selesai Pelaksanaan</th>
-                        <th>Mulai Persiapan</th>
-                        <th>Selesai Persiapan</th>
-                        <th>Durasi Pelaksanaan</th>
-                        <th>Durasi Persiapan</th>
-                        <th>Total Durasi</th>
+                        <th>Status</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -40,18 +32,13 @@
                     @foreach ($data as $i => $row)
                         <tr>
                             <td>{{ $i + 1 }}</td>
-                            <td>{{ $row->project_manager }}</td>
-                            <td>{{ $row->client }}</td>
                             <td>{{ $row->nama_event }}</td>
-                            <td>{{ $row->lokasi }}</td>
-                            <td>{{ number_format($row->nilai_project) }}</td>
+                            <td>{{ $row->client }}</td>
                             <td>{{ $row->mulai_pelaksanaan }}</td>
-                            <td>{{ $row->selesai_pelaksanaan }}</td>
-                            <td>{{ $row->mulai_persiapan }}</td>
-                            <td>{{ $row->selesai_persiapan }}</td>
-                            <td>{{ $row->formatJam($row->durasi_pelaksanaan) }}</td>
+                            <td>{{ $row->status }}</td>
+                            {{-- <td>{{ $row->formatJam($row->durasi_pelaksanaan) }}</td>
                             <td>{{ $row->formatJam($row->durasi_persiapan) }}</td>
-                            <td>{{ $row->formatJam($row->total_durasi) }}</td>
+                            <td>{{ $row->formatJam($row->total_durasi) }}</td> --}}
                             <td>
                                 <a href="{{ route('event.show', $row->id) }}" class="btn btn-sm btn-info">
                                     Detail

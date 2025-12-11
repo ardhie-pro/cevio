@@ -10,8 +10,26 @@ class EventKru extends Model
 
     protected $fillable = [
         'event_id',
-        'user_id'
+        'user_id',
+        'tanggal_kerja',
+        'role_id',
+        'role_shift_id',
+        'fee_per_unit',
+        'jumlah_unit',
+        'total_gaji',
+        'score_performance',
+        'catatan_performance'
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function roleShift()
+    {
+        return $this->belongsTo(RoleShift::class);
+    }
 
     public function event()
     {

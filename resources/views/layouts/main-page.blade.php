@@ -252,6 +252,10 @@
 
     <!-- Bootstrap JS (Popper included) -->
 
+
+    <!-- DATATABLES CSS -->
+    <script src="{{ asset('assetts/libs/jquery/jquery.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Sidebar toggle for small screens
         const btn = document.getElementById('btnToggleSidebar');
@@ -275,10 +279,40 @@
             }
         });
     </script>
-    <!-- DATATABLES CSS -->
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('assetts/libs/jquery/jquery.min.js') }}"></script>
+
+    <script>
+        $("#role_id").on("change", function() {
+            let roleID = $(this).val();
+
+            $.get("{{ url('/role') }}/" + roleID + "/shifts", function(data) {
+                $("#shift_id").html("<option value=''>-- Pilih Shift --</option>");
+
+                data.forEach(s => {
+                    $("#shift_id").append(
+                        `<option value="${s.id}" data-fee="${s.fee_per_unit}">
+                        ${s.jam_mulai} - ${s.jam_selesai} (Rp ${s.fee_per_unit})
+                    </option>`
+                    );
+                });
+            });
+        });
+
+        $("#shift_id").on("change", function() {
+            let fee = $(this).find(":selected").data("fee");
+            $("#fee").val(fee);
+
+            let jumlah = $("#jumlah").val();
+            $("#total").val(fee * jumlah);
+        });
+
+        $("#jumlah").on("input", function() {
+            let fee = $("#fee").val();
+            $("#total").val(fee * $(this).val());
+        });
+    </script>
+
+
     <script src="{{ asset('assetts/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assetts/libs/metismenu/metisMenu.min.js') }}"></script>
     <script src="{{ asset('assetts/libs/simplebar/simplebar.min.js') }}"></script>

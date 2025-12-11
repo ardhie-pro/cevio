@@ -11,6 +11,7 @@ use App\Http\Controllers\SoalMultipleChoiceController;
 use App\Http\Controllers\KelompokSoalController;
 use App\Http\Controllers\SoalController;
 use App\Http\Controllers\TarikModulController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\EventController;
 
 use Illuminate\Support\Facades\Route;
@@ -65,17 +66,37 @@ Route::middleware(['auth', 'role:project-manajer,manajer'])->group(function () {
     Route::get('event', [EventController::class, 'index'])->name('event.index');
     Route::post('event', [EventController::class, 'store'])->name('event.store');
     Route::put('event/{event}', [EventController::class, 'update'])->name('event.update');
+    Route::post('/event/{event}/status', [EventController::class, 'updateStatus'])
+        ->name('event.update.status');
     Route::delete('event/{event}', [EventController::class, 'destroy'])->name('event.destroy');
 
     //detail event
     Route::resource('event', EventController::class);
 
     // pemasukan & pengeluaran
+    Route::get('/event/{id}/keuangan', [EventController::class, 'keuangan'])->name('event.keuangan');
     Route::post('/event/{id}/pemasukan', [EventController::class, 'tambahPemasukan'])->name('event.pemasukan');
     Route::post('/event/{id}/pengeluaran', [EventController::class, 'tambahPengeluaran'])->name('event.pengeluaran');
 
     // tambah kru
+    Route::get('/event/{id}/kru', [EventController::class, 'kru'])->name('event.kru');
     Route::post('/event/{id}/kru', [EventController::class, 'tambahKru'])->name('event.kru');
+    Route::get(
+        '/event/{event}/kru/{user}/invoice-total',
+        [EventController::class, 'invoiceTotal']
+    )
+        ->name('event.kru.invoice.total');
+
+    // role
+    Route::get('/role', [RoleController::class, 'index'])->name('role.index');
+    Route::post('/role/store', [RoleController::class, 'store'])->name('role.store');
+
+    Route::post('/role/{id}/shift/store', [RoleController::class, 'tambahShift'])->name('shift.store');
+    Route::delete('/shift/{id}/delete', [RoleController::class, 'deleteShift'])->name('shift.delete');
+    Route::get('/role/{id}/shifts', [EventController::class, 'getShifts']);
+
+    Route::delete('/role/{id}/delete', [RoleController::class, 'deleteRole'])->name('role.delete');
+
 
     // halaman review
     Route::get('/tampilkankode', [App\Http\Controllers\ReviewController::class, 'tampilkankode'])->name('tampilkankode.index');

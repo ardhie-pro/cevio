@@ -19,6 +19,7 @@ class Event extends Model
         'durasi_pelaksanaan',
         'durasi_persiapan',
         'total_durasi',
+        'status',
     ];
     public function pemasukan()
     {
