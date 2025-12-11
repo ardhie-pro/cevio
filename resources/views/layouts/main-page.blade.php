@@ -180,6 +180,11 @@
                         <i class="bi bi-people"></i> Daftar Anggota
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('role.index') }}">
+                        <i class="bi bi-people"></i> Master Role
+                    </a>
+                </li>
             @endif
 
 

@@ -127,7 +127,7 @@
     <div class="container mt-5">
         <div class="card p-5 d-flex justify-content-between align-items-center flex-row">
             <div>
-                <h3 class="mb-0">{{ $event->nama_event }}</h3>
+                <h3 class="mb-3">{{ $event->nama_event }}</h3>
                 <p><b>Lokasi:</b> {{ $event->lokasi }} | <b>Client:</b> {{ $event->client }}</p>
             </div>
 

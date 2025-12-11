@@ -36,7 +36,7 @@
                             <th>Durasi</th>
                             <th>Fee / Unit</th>
                             <th>Total Fee</th>
-                            <th>Aksi</th> <!-- 🔥 Tambahkan kolom aksi -->
+
                         </tr>
                     </thead>
                     <tbody>
@@ -92,31 +92,7 @@
                 @endphp
 
 
-                <h4>Total Gaji Per Kru</h4>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Nama Kru</th>
-                            <th>Total Gaji</th>
-                            <th>Invoice</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($rekap as $userId => $r)
-                            <tr>
-                                <td>{{ $r['nama'] }}</td>
-                                <td>Rp {{ number_format($r['total'], 0, ',', '.') }}</td>
-                                <td>
-                                    <a href="{{ route('event.kru.invoice.total', [$event->id, $userId]) }}"
-                                        class="btn btn-primary btn-sm">
-                                        Invoice
-                                    </a>
 
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
 
 
 
@@ -125,6 +101,34 @@
 
             </div>
 
+
+        </div>
+        <div class="card p-5">
+            <h4>Total Gaji Per Kru</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nama Kru</th>
+                        <th>Total Gaji</th>
+                        <th>Invoice</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($rekap as $userId => $r)
+                        <tr>
+                            <td>{{ $r['nama'] }}</td>
+                            <td>Rp {{ number_format($r['total'], 0, ',', '.') }}</td>
+                            <td>
+                                <a href="{{ route('event.kru.invoice.total', [$event->id, $userId]) }}"
+                                    class="btn btn-primary btn-sm">
+                                    Invoice
+                                </a>
+
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
         {{-- ===================== MODAL TAMBAH KRU ====================== --}}
         <div class="modal fade" id="modalTambahKru">
