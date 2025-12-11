@@ -70,6 +70,11 @@ Route::middleware(['auth', 'role:project-manajer,manajer'])->group(function () {
         ->name('event.update.status');
     Route::delete('event/{event}', [EventController::class, 'destroy'])->name('event.destroy');
 
+    // pusat data
+    Route::get('/event/{id}/pdf', [EventController::class, 'pdfSemua'])
+        ->name('event.pdfSemua');
+
+
     //detail event
     Route::resource('event', EventController::class);
 
@@ -86,6 +91,10 @@ Route::middleware(['auth', 'role:project-manajer,manajer'])->group(function () {
         [EventController::class, 'invoiceTotal']
     )
         ->name('event.kru.invoice.total');
+
+    Route::get('/event/{id}/kru/rekap-invoice', [EventController::class, 'rekapInvoice'])
+        ->name('event.kru.rekap.invoice');
+
 
     // role
     Route::get('/role', [RoleController::class, 'index'])->name('role.index');

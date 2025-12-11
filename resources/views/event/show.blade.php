@@ -125,21 +125,127 @@
     </style>
 
     <div class="container mt-5">
-        <div class="card p-5 d-flex justify-content-between align-items-center flex-row">
-            <div>
-                <h3 class="mb-3">{{ $event->nama_event }}</h3>
-                <p><b>Lokasi:</b> {{ $event->lokasi }} | <b>Client:</b> {{ $event->client }}</p>
-            </div>
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-1">{{ $event->nama_event }}</h3>
+                    <p class="text-muted mb-2">
+                        <b>Lokasi:</b> {{ $event->lokasi }} |
+                        <b>Client:</b> {{ $event->client }}
+                    </p>
+                    <span
+                        class="badge
+                @if ($event->status == 'Pending') bg-warning
+                @elseif($event->status == 'Berjalan') bg-primary
+                @else bg-success @endif
+            ">
+                        {{ $event->status }}
+                    </span>
+                </div>
 
-            <div>
-                <select id="eventStatus" class="form-select" style="width:200px;">
-                    <option {{ $event->status == 'Pending' ? 'selected' : '' }}>Pending</option>
-                    <option {{ $event->status == 'Berjalan' ? 'selected' : '' }}>Berjalan</option>
-                    <option {{ $event->status == 'Close' ? 'selected' : '' }}>Close</option>
-                </select>
+                <div class="text-end">
+                    <select id="eventStatus" class="form-select fw-bold" style="width: 180px;">
+                        <option {{ $event->status == 'Pending' ? 'selected' : '' }}>Pending</option>
+                        <option {{ $event->status == 'Berjalan' ? 'selected' : '' }}>Berjalan</option>
+                        <option {{ $event->status == 'Close' ? 'selected' : '' }}>Close</option>
+                    </select>
+
+                    <button class="btn btn-dark mt-3" data-bs-toggle="collapse" data-bs-target="#detailEvent">
+                        Lihat Semua Detail
+                    </button>
+                </div>
             </div>
         </div>
+        <div id="detailEvent" class="collapse">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
 
+                    <h5 class="mb-3">Detail Event</h5>
+                    <div class="row mb-4">
+
+                        <div class="col-md-4 mb-3">
+                            <label class="fw-bold">Project Manager</label>
+                            <p>{{ $event->project_manager }}</p>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="fw-bold">Nilai Project</label>
+                            <p>Rp {{ number_format($event->nilai_project, 0, ',', '.') }}</p>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="fw-bold">Status</label>
+                            <p>{{ $event->status }}</p>
+                        </div>
+
+                        <hr class="mt-2">
+
+                        <h5 class="mt-3">Durasi & Waktu</h5>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">Mulai Pelaksanaan</label>
+                            <p>{{ $event->mulai_pelaksanaan }}</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">Selesai Pelaksanaan</label>
+                            <p>{{ $event->selesai_pelaksanaan }}</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">Mulai Persiapan</label>
+                            <p>{{ $event->mulai_persiapan }}</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">Selesai Persiapan</label>
+                            <p>{{ $event->selesai_persiapan }}</p>
+                        </div>
+
+                        <hr>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="fw-bold">Durasi Pelaksanaan</label>
+                            @php
+                                $total2 = $event->durasi_pelaksanaan;
+                                $hari2 = floor($total2 / 24);
+                                $jam2 = $total2 % 24;
+                            @endphp
+                            <p class="fw-bold text-primary">
+                                {{ $hari2 > 0 ? $hari2 . ' Hari ' : '' }}{{ $jam2 }} Jam
+                            </p>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="fw-bold">Durasi Persiapan</label>
+                            @php
+                                $total1 = $event->durasi_persiapan;
+                                $hari1 = floor($total1 / 24);
+                                $jam1 = $total1 % 24;
+                            @endphp
+                            <p class="fw-bold text-primary">
+                                {{ $hari1 > 0 ? $hari1 . ' Hari ' : '' }}{{ $jam1 }} Jam
+                            </p>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="fw-bold">Total Durasi</label>
+
+                            @php
+                                $total = $event->total_durasi;
+                                $hari = floor($total / 24);
+                                $jam = $total % 24;
+                            @endphp
+
+                            <p class="fw-bold text-primary">
+                                {{ $hari > 0 ? $hari . ' Hari ' : '' }}{{ $jam }} Jam
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 
@@ -165,6 +271,15 @@
                 </a>
             </div>
 
+            <div id="pdfCard" class="col-md-12 mt-4 d-none">
+                <a href="{{ route('event.pdfSemua', $event->id) }}" class="text-decoration-none">
+                    <div class="card shadow-sm p-4 text-center bg-primary text-white">
+                        <h4>📄 Download Laporan Lengkap Event</h4>
+                        <p class="text-light">Berisi Data Event, Keuangan, & Kru</p>
+                    </div>
+                </a>
+            </div>
+
         </div>
 
     </div>
@@ -172,6 +287,26 @@
 
     <!-- Bootstrap JS (Popper included) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const status = document.getElementById('eventStatus');
+            const pdfCard = document.getElementById('pdfCard');
+
+            function checkStatus() {
+                if (status.value === 'Close') {
+                    pdfCard.classList.remove('d-none');
+                } else {
+                    pdfCard.classList.add('d-none');
+                }
+            }
+
+            status.addEventListener('change', checkStatus);
+
+            // jalankan saat halaman dimuat
+            checkStatus();
+        });
+    </script>
+
     <script>
         // Sidebar toggle for small screens
         const btn = document.getElementById('btnToggleSidebar');

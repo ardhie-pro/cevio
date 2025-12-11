@@ -211,7 +211,6 @@ class EventController extends Controller
 
     public function invoiceTotal($event_id, $user_id)
     {
-        // Ambil semua shift milik kru ini
         $kruList = EventKru::with(['user', 'roleShift.role', 'event'])
             ->where('event_id', $event_id)
             ->where('user_id', $user_id)
@@ -222,30 +221,93 @@ class EventController extends Controller
         }
 
         $user = $kruList->first()->user;
+        $eventName = $kruList->first()->event->nama_event; // <-- Tambah ini
 
-        // Hitung total seluruh shift
+        // Hitung total
         $grandTotal = 0;
-
         foreach ($kruList as $k) {
             $unit  = $k->unit ?? 1;
             $fee   = $k->fee_per_unit ?? $k->roleShift->fee_per_unit;
             $total = $unit * $fee;
-
             $grandTotal += $total;
         }
 
-        // Pajak & transfer
         $pajak    = $grandTotal * 0.025;
         $transfer = $grandTotal - $pajak;
 
         return PDF::loadView('event.kru-invoice', [
-            'kruList'   => $kruList,
-            'user'      => $user,
+            'kruList'    => $kruList,
+            'user'       => $user,
+            'eventName'  => $eventName,  // <-- Kirim ke view
             'grandTotal' => $grandTotal,
-            'pajak'     => $pajak,
-            'transfer'  => $transfer
+            'pajak'      => $pajak,
+            'transfer'   => $transfer
         ])
             ->setPaper('A4', 'portrait')
             ->stream("Invoice-Total-{$user->name}.pdf");
+    }
+
+    // public function pdfSemua($id)
+    // {
+    //     $event = Event::with(['pemasukan', 'pengeluaran', 'kru.user', 'kru.role', 'kru.roleShift'])
+    //         ->findOrFail($id);
+
+    //     $pdf = PDF::loadView('event.pdf.semua', compact('event'))
+    //         ->setPaper('a4', 'portrait');
+
+    //     return $pdf->download('laporan-event-' . $event->nama_event . '.pdf');
+    // }
+
+    public function pdfSemua($id)
+    {
+        $event = Event::with(['pemasukan', 'pengeluaran', 'kru.user', 'kru.role', 'kru.roleShift'])
+            ->findOrFail($id);
+
+        $pdf = PDF::loadView('event.pdf.semua', compact('event'))
+            ->setPaper('a4', 'portrait');
+
+        // Tampilkan preview PDF di browser (tidak mendownload)
+        return $pdf->stream('laporan-event-' . $event->nama_event . '.pdf');
+    }
+    public function rekapInvoice($event_id)
+    {
+        $event = Event::findOrFail($event_id);
+
+        // Ambil semua kru + relasi
+        $kruList = EventKru::with(['user', 'roleShift.role'])
+            ->where('event_id', $event_id)
+            ->get();
+
+        // Siapkan data rekap
+        $rekap = [];
+
+        foreach ($kruList as $k) {
+            $uid = $k->user_id;
+
+            $unit  = $k->unit ?? 1;
+            $fee   = $k->fee_per_unit ?? $k->roleShift->fee_per_unit;
+            $total = $unit * $fee;
+
+            if (!isset($rekap[$uid])) {
+                $rekap[$uid] = [
+                    'nama' => $k->user->name ?? '-',
+                    'nik'  => $k->user->nik ?? '-',
+                    'npwp' => $k->user->npwp ?? '-',
+                    'alamat' => $k->user->alamat ?? '-',
+                    'bank' => $k->user->bank ?? '-',
+                    'rekening' => $k->user->rekening ?? '-',
+                    'total' => 0,
+                ];
+            }
+
+            $rekap[$uid]['total'] += $total;
+        }
+
+        return PDF::loadView('event.rekap-gaji-pdf', [
+            'rekap' => $rekap,
+            'event' => $event
+        ])
+            ->setPaper('A4', 'landscape')
+            ->stream("Rekap-Gaji-{$event->nama_event}.pdf");
     }
 }

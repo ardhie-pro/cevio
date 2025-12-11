@@ -91,20 +91,18 @@
                     }
                 @endphp
 
-
-
-
-
-
-
-
-
             </div>
 
 
         </div>
         <div class="card p-5">
             <h4>Total Gaji Per Kru</h4>
+
+            <!-- Tombol Download -->
+            <a href="{{ route('event.kru.rekap.invoice', $event->id) }}" class="btn btn-success mb-3">
+                Download Rekap Gaji (PDF)
+            </a>
+
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -123,13 +121,13 @@
                                     class="btn btn-primary btn-sm">
                                     Invoice
                                 </a>
-
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
+
         {{-- ===================== MODAL TAMBAH KRU ====================== --}}
         <div class="modal fade" id="modalTambahKru">
             <div class="modal-dialog">

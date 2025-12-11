@@ -5,19 +5,39 @@
 @section('content4')
     <div class="container">
 
-        <h3>Keuangan Event: {{ $event->nama_event }}</h3>
+        <h3 class="mb-3">Keuangan Event: {{ $event->nama_event }}</h3>
 
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalPemasukan">Tambah Pemasukan</button>
-        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalPengeluaran">Tambah Pengeluaran</button>
+        <!-- ALERT SALDO -->
+        @php
+            $totalMasuk = $event->pemasukan->where('type', 'masuk')->sum('nominal');
+            $totalKembali = $event->pemasukan->where('type', 'kembali')->sum('nominal');
+            $totalPengeluaran = $event->pengeluaran->sum('jumlah');
 
-        <hr>
+            $saldo = $totalMasuk - $totalKembali - $totalPengeluaran;
+        @endphp
 
-        <!-- CARD PEMASUKAN -->
-        <div class="card mb-3">
-            <div class="card-header bg-success text-white">Pemasukan</div>
+        <div class="alert alert-info p-3">
+            <h5 class="m-0">
+                <b>Saldo Akhir:
+                    @if ($saldo >= 0)
+                        <span class="text-success">Rp {{ number_format($saldo) }}</span>
+                    @else
+                        <span class="text-danger">Rp {{ number_format($saldo) }}</span>
+                    @endif
+                </b>
+            </h5>
+        </div>
+
+        <button class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#modalPemasukan">Tambah Pattycash</button>
+        <button class="btn btn-danger mb-4" data-bs-toggle="modal" data-bs-target="#modalPengeluaran">Tambah
+            Pengeluaran</button>
+
+        <!-- ===================== CARD PEMASUKAN ====================== -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-success text-white fw-bold">Pemasukan</div>
             <div class="card-body p-0">
-                <table class="table table-striped">
-                    <thead>
+                <table class="table table-striped m-0">
+                    <thead class="table-light">
                         <tr>
                             <th>#</th>
                             <th>Nominal</th>
@@ -33,44 +53,37 @@
                             <tr>
                                 <td>{{ $i + 1 }}</td>
 
-                                {{-- Nominal --}}
+                                <!-- Nominal -->
                                 <td>
                                     @if ($p->type == 'masuk')
-                                        <span class="text-success"><b>+ Rp {{ number_format($p->nominal) }}</b></span>
+                                        <span class="text-success fw-bold">+ Rp {{ number_format($p->nominal) }}</span>
                                     @else
-                                        <span class="text-danger"><b>- Rp {{ number_format($p->nominal) }}</b></span>
+                                        <span class="text-danger fw-bold">- Rp {{ number_format($p->nominal) }}</span>
                                     @endif
                                 </td>
 
-                                {{-- Jenis --}}
+                                <!-- Jenis -->
                                 <td>
                                     @if ($p->type == 'masuk')
                                         <span class="badge bg-success">Uang Masuk</span>
                                     @else
-                                        <span class="badge bg-warning">Uang Kembali</span>
+                                        <span class="badge bg-warning text-dark">Uang Kembali</span>
                                     @endif
                                 </td>
 
-                                {{-- Keterangan --}}
-                                <td>{{ $p->keterangan }}</td>
-
-
-
-                                {{-- Tanggal --}}
+                                <td>{{ $p->keterangan ?? '-' }}</td>
                                 <td>{{ $p->created_at->format('d M Y') }}</td>
 
-                                {{-- Bukti --}}
+                                <!-- Bukti -->
                                 <td>
                                     @if ($p->bukti_tf)
                                         <a href="{{ asset('storage/' . $p->bukti_tf) }}" target="_blank">
-                                            <i class="bi bi-image"></i> Lihat Bukti
+                                            <i class="bi bi-image"></i> Lihat
                                         </a>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
-
-
                             </tr>
                         @endforeach
                     </tbody>
@@ -79,60 +92,46 @@
             </div>
         </div>
 
-        <!-- CARD PENGELUARAN -->
-        <div class="card">
-            <div class="card-header bg-danger text-white">Pengeluaran</div>
+        <!-- ===================== CARD PENGELUARAN ====================== -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-danger text-white fw-bold">Pengeluaran</div>
             <div class="card-body p-0">
-                <table class="table table-striped">
-                    <thead>
+                <table class="table table-striped m-0">
+                    <thead class="table-light">
                         <tr>
                             <th>#</th>
                             <th>Tanggal</th>
                             <th>Kategori</th>
                             <th>Item</th>
                             <th>Jumlah</th>
-                            <th>Payment Status</th>
+                            <th>Status</th>
                             <th>Invoice</th>
-                            <th>Bukti TF</th>
+                            <th>Bukti</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         @foreach ($event->pengeluaran as $i => $p)
                             <tr>
                                 <td>{{ $i + 1 }}</td>
-
-                                <!-- Tanggal -->
-                                <td>
-                                    {{ $p->tanggal_pembayaran ? \Carbon\Carbon::parse($p->tanggal_pembayaran)->format('d M Y') : '-' }}
+                                <td>{{ $p->tanggal_pembayaran ? \Carbon\Carbon::parse($p->tanggal_pembayaran)->format('d M Y') : '-' }}
                                 </td>
-
-                                <!-- Kategori -->
                                 <td>{{ $p->kategori ?? '-' }}</td>
-
-                                <!-- Item -->
                                 <td>{{ $p->item ?? '-' }}</td>
-
-                                <!-- Jumlah -->
                                 <td>Rp {{ number_format($p->jumlah) }}</td>
+                                <td><span class="badge bg-info">{{ $p->payment_status }}</span></td>
 
-                                <!-- Payment Status -->
-                                <td>
-                                    <span class="badge bg-info">{{ $p->payment_status }}</span>
-                                </td>
-
-                                <!-- Invoice / Nota -->
                                 <td>
                                     @if ($p->invoice)
-                                        <a href="{{ $p->invoice }}" target="_blank">Invoice</a>
+                                        <a href="{{ $p->invoice }}" target="_blank">Lihat</a>
                                     @else
                                         -
                                     @endif
                                 </td>
 
-                                <!-- Bukti Transfer -->
                                 <td>
                                     @if ($p->bukti_tf)
-                                        <a href="{{ $p->bukti_tf }}" target="_blank">Bukti TF</a>
+                                        <a href="{{ $p->bukti_tf }}" target="_blank">Bukti</a>
                                     @else
                                         -
                                     @endif
@@ -140,10 +139,13 @@
                             </tr>
                         @endforeach
                     </tbody>
-                </table>
 
+                </table>
             </div>
         </div>
+
+
+        {{-- CATEGORY DATA --}}
         @php
             $kategoriList = collect([
                 (object) ['nama' => 'Transportasi'],
@@ -158,16 +160,16 @@
             ]);
         @endphp
 
-
-        {{-- ===================== MODAL TAMBAH PEMASUKAN ====================== --}}
+        {{-- MODAL PEMASUKAN --}}
         <div class="modal fade" id="modalPemasukan">
             <div class="modal-dialog">
                 <form action="{{ route('event.pemasukan', $event->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-content">
                         <div class="modal-header bg-success text-white">
-                            <h5 class="modal-title">Tambah Pemasukan</h5>
+                            <h5 class="modal-title">Tambah Pettycash</h5>
                         </div>
+
                         <div class="modal-body">
 
                             <label>Type</label>
@@ -197,6 +199,7 @@
                             </div>
 
                         </div>
+
                         <div class="modal-footer">
                             <button class="btn btn-success">Simpan</button>
                         </div>
@@ -206,8 +209,7 @@
         </div>
 
 
-
-        {{-- ===================== MODAL TAMBAH PENGELUARAN ====================== --}}
+        {{-- MODAL PENGELUARAN --}}
         <div class="modal fade" id="modalPengeluaran">
             <div class="modal-dialog">
                 <form action="{{ route('event.pengeluaran', $event->id) }}" method="POST">
@@ -216,8 +218,8 @@
                         <div class="modal-header bg-danger text-white">
                             <h5 class="modal-title">Tambah Pengeluaran</h5>
                         </div>
-                        <div class="modal-body">
 
+                        <div class="modal-body">
                             <label>Tanggal Pembayaran</label>
                             <input type="date" name="tanggal_pembayaran" class="form-control">
 
@@ -260,26 +262,27 @@
                                 <option>DP 1</option>
                                 <option>DP 2</option>
                                 <option>DP 3</option>
+                                <option>DP 4</option>
+                                <option>DP 5</option>
                                 <option>LUNAS</option>
                             </select>
-                            <div class="modal-footer">
-                                <button class="btn btn-success">Simpan</button>
-                            </div>
                         </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-success">Simpan</button>
+                        </div>
+
                     </div>
-
-
                 </form>
             </div>
         </div>
+
     </div>
+
     <script>
+        // Show/hide bukti tf saat type = kembali
         document.getElementById('typePemasukan').addEventListener('change', function() {
-            if (this.value === 'kembali') {
-                document.getElementById('formKembali').style.display = 'block';
-            } else {
-                document.getElementById('formKembali').style.display = 'none';
-            }
+            document.getElementById('formKembali').style.display = (this.value === 'kembali') ? 'block' : 'none';
         });
     </script>
 
