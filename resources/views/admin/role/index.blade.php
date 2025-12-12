@@ -3,6 +3,20 @@
 @section('title', 'Dashboard')
 @section('content4')
     <div class="card p-3">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Berhasil!</strong> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Gagal!</strong> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
         <h3>Master Role & Shift</h3>
 
         <form action="{{ route('role.store') }}" method="POST">

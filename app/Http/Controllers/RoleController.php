@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\RoleShift;
 use App\Models\Role;
+use App\Models\EventKru;
+
 
 
 
@@ -53,13 +55,52 @@ class RoleController extends Controller
 
     public function deleteShift($id)
     {
-        RoleShift::find($id)->delete();
-        return back()->with('success', 'Shift berhasil dihapus');
+        $shift = RoleShift::find($id);
+
+        if (!$shift) {
+            return back()->with('error', 'Shift tidak ditemukan.');
+        }
+
+        // Cek apakah shift digunakan di event_kru
+        $event = EventKru::with('event')
+            ->where('role_shift_id', $id)
+            ->first();
+
+        if ($event) {
+            return back()->with(
+                'error',
+                'Shift ini terdaftar pada event "' . $event->event->nama_event . '", maka tidak bisa dihapus. Harap mengubah data di event tersebut terlebih dahulu.'
+            );
+        }
+
+        $shift->delete();
+
+        return back()->with('success', 'Shift berhasil dihapus.');
     }
+
 
     public function deleteRole($id)
     {
-        Role::find($id)->delete();
-        return back()->with('success', 'Role berhasil dihapus');
+        $role = Role::find($id);
+
+        if (!$role) {
+            return back()->with('error', 'Role tidak ditemukan.');
+        }
+
+        // Cek apakah role digunakan di event_kru
+        $event = EventKru::with('event')
+            ->where('role_id', $id)
+            ->first();
+
+        if ($event) {
+            return back()->with(
+                'error',
+                'Peran ini terdaftar pada event "' . $event->event->nama_event . '", maka tidak bisa dihapus. Harap mengubah data di event tersebut terlebih dahulu.'
+            );
+        }
+
+        $role->delete();
+
+        return back()->with('success', 'Role berhasil dihapus.');
     }
 }
