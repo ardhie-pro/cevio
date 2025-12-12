@@ -158,7 +158,6 @@ class EventController extends Controller
             'kategori' => 'required',
             'item' => 'required',
             'deskripsi' => 'nullable',
-            'tipe_pembayaran' => 'nullable',
             'jumlah' => 'required|numeric',
             'payment_method' => 'nullable',
             'pic' => 'nullable',
@@ -309,5 +308,33 @@ class EventController extends Controller
         ])
             ->setPaper('A4', 'landscape')
             ->stream("Rekap-Gaji-{$event->nama_event}.pdf");
+    }
+    public function detail($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Ambil seluruh riwayat kerja user
+        $kru = EventKru::with(['event', 'role', 'roleShift'])
+            ->where('user_id', $id)
+            ->orderBy('tanggal_kerja', 'asc')
+            ->get();
+
+        // Identitas
+        $pertamaKerja = $kru->first()->tanggal_kerja ?? '-';
+        $terakhirKerja = $kru->last()->tanggal_kerja ?? '-';
+        $jumlahEvent = $kru->count();
+        $totalGaji = $kru->sum('total_gaji');
+        $averagePerformance = $kru->avg('score_performance') ?? 0;
+
+
+        return view('user.detail', compact(
+            'user',
+            'kru',
+            'pertamaKerja',
+            'terakhirKerja',
+            'jumlahEvent',
+            'totalGaji',
+            'averagePerformance'
+        ));
     }
 }

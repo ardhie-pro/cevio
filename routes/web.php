@@ -62,6 +62,8 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 
 
 Route::middleware(['auth', 'role:project-manajer,manajer'])->group(function () {
+    Route::get('/user/detail/{id}', [EventController::class, 'detail'])->name('user.detail');
+
     // halaman event input update delete
     Route::get('event', [EventController::class, 'index'])->name('event.index');
     Route::post('event', [EventController::class, 'store'])->name('event.store');

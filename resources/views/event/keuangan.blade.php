@@ -28,8 +28,8 @@
             </h5>
         </div>
 
-        <button class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#modalPemasukan">Tambah Pattycash</button>
-        <button class="btn btn-danger mb-4" data-bs-toggle="modal" data-bs-target="#modalPengeluaran">Tambah
+        <button class="btn btn-success mb-5" data-bs-toggle="modal" data-bs-target="#modalPemasukan">Tambah Pettycash</button>
+        <button class="btn btn-danger mb-5" data-bs-toggle="modal" data-bs-target="#modalPengeluaran">Tambah
             Pengeluaran</button>
 
         <!-- ===================== CARD PEMASUKAN ====================== -->
@@ -236,14 +236,17 @@
                             <label class="mt-2">Deskripsi</label>
                             <textarea name="deskripsi" class="form-control"></textarea>
 
-                            <label class="mt-2">Tipe Pembayaran</label>
-                            <input type="text" name="tipe_pembayaran" class="form-control">
-
                             <label class="mt-2">Jumlah</label>
                             <input type="number" name="jumlah" class="form-control">
 
                             <label class="mt-2">Payment Method</label>
-                            <input type="text" name="payment_method" class="form-control">
+                            <select name="payment_method" class="form-control">
+                                <option value="">-- Pilih Payment Method --</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Transfer">Transfer</option>
+                                <option value="Cek/Giro">Cek/Giro</option>
+                            </select>
+
 
                             <label class="mt-2">PIC</label>
                             <input type="text" name="pic" class="form-control">

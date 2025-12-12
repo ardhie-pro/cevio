@@ -40,4 +40,8 @@ class EventKru extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function eventKru()
+    {
+        return $this->hasMany(EventKru::class, 'user_id');
+    }
 }

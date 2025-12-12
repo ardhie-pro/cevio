@@ -226,6 +226,10 @@
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->lihatpw }}</td>
+                            <td> <a href="{{ route('user.detail', $user->id) }}" class="btn btn-info btn-sm">
+                                    Detail
+                                </a></td>
+
 
                             <td>
                                 <form action="{{ route('admin.updateUser', $user->id) }}" method="POST">
