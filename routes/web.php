@@ -13,6 +13,8 @@ use App\Http\Controllers\SoalController;
 use App\Http\Controllers\TarikModulController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\BonusController;
+
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response;
@@ -63,6 +65,15 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 
 Route::middleware(['auth', 'role:project-manajer,manajer'])->group(function () {
     Route::get('/user/detail/{id}', [EventController::class, 'detail'])->name('user.detail');
+    Route::get('/admin/manager-detail/{id}', [EventController::class, 'managerDetail'])
+        ->name('admin.managerDetail');
+
+    // bonus
+    Route::get('/bonus-jpt', [BonusController::class, 'index'])->name('bonus.index');
+    Route::post('/bonus-jpt/save', [BonusController::class, 'save'])->name('bonus.save');
+    Route::get('/bonus-jpt/download', [BonusController::class, 'download'])->name('bonus.download');
+
+
 
     // halaman event input update delete
     Route::get('event', [EventController::class, 'index'])->name('event.index');

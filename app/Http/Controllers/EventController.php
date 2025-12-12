@@ -337,4 +337,17 @@ class EventController extends Controller
             'averagePerformance'
         ));
     }
+    public function managerDetail($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Ambil semua event yang dia pegang
+        $events = Event::with([
+            'kru.user',
+            'pemasukan',
+            'pengeluaran'
+        ])->where('project_manager', $user->name)->get();
+
+        return view('admin.manajer-detail', compact('user', 'events'));
+    }
 }

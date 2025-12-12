@@ -94,6 +94,7 @@
                     <option value="manajer">Manajer</option>
                     <option value="project-manajer">Project-Manajer</option>
                     <option value="kru">Kru</option>
+                    <option value="freelance">Freelance</option>
                 </select>
             </div>
             {{-- <div class="mb-3">
@@ -203,7 +204,7 @@
         <div class="title">Informasi Akun — User</div>
 
         <div class="table-responsive mt-4">
-            <table class="table table-bordered">
+            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap">
                 <thead style="background:#F4C542; color:#0E2542; font-weight:700;">
                     <tr>
                         <th>No</th>
@@ -211,7 +212,9 @@
                         <th>Email</th>
                         <th>Password</th>
                         <th>Role</th>
+                        <th>Aktivasi</th>
                         <th>Status</th>
+
                         {{-- <th>Grup</th> --}}
                         <th>Aksi</th>
                     </tr>
@@ -226,9 +229,22 @@
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->lihatpw }}</td>
-                            <td> <a href="{{ route('user.detail', $user->id) }}" class="btn btn-info btn-sm">
-                                    Detail
-                                </a></td>
+                            <td>
+                                @if ($user->status == 'manajer')
+                                    <p>-</p>
+                                @elseif ($user->status == 'project-manajer')
+                                    <a href="{{ route('admin.managerDetail', $user->id) }}" class="btn btn-warning btn-sm">
+                                        Detail Project
+                                    </a>
+                                @else
+                                    <a href="{{ route('user.detail', $user->id) }}" class="btn btn-info btn-sm">
+                                        Detail
+                                    </a>
+                                @endif
+                            </td>
+
+
+
 
 
                             <td>
@@ -252,6 +268,8 @@
                                         Project Manajer
                                     </option>
                                     <option value="admin" {{ $user->status == 'kru' ? 'selected' : '' }}>Kru
+                                    </option>
+                                    <option value="admin" {{ $user->status == 'freelance' ? 'selected' : '' }}>Freelance
                                     </option>
 
                                 </select>

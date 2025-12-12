@@ -27,6 +27,14 @@ class User extends Authenticatable
         'lihatpw',
         'grup',
         'history',
+        'bank',
+        'cabang',
+        'no_rek',
+        'nama_npwp',
+        'npwp',
+        'alamat_npwp',
+        'nik',
+        'alamat',
 
 
     ];
@@ -53,5 +61,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function eventKru()
+    {
+        return $this->hasMany(EventKru::class, 'user_id');
     }
 }
