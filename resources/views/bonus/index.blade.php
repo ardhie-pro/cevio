@@ -68,8 +68,6 @@
                                 <p>{{ $rekap[$user->id]->updated_at ?? '' }}</p>
 
                             </td>
-
-
                         </tr>
                     @endforeach
 
@@ -80,10 +78,6 @@
             <a href="{{ route('bonus.download', ['tahun' => $tahun]) }}" class="btn btn-success">
                 Download Rekap
             </a>
-
-
-
         </form>
-
     </div>
 @endsection

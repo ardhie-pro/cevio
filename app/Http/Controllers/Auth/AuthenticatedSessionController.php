@@ -30,12 +30,10 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
 
         // 🔍 Arahkan sesuai status
-        if ($user->status === 'project-manajer') {
-            return redirect()->intended(route('event.index', [], false));
-        } elseif ($user->status === 'manajer') {
-            return redirect()->intended(route('event.index', [], false));
-        } elseif ($user->status === 'kru') {
-            return redirect()->intended(route('kode.login', [], false)); // ganti 'user.index' sesuai route kamu
+        if (in_array($user->status, ['project-manajer', 'manajer'])) {
+            return redirect()->intended(route('event.index'));
+        } elseif (in_array($user->status, ['kru', 'freelance'])) {
+            return redirect()->intended(route('user.dashboard'));
         } else {
             Auth::logout();
             return redirect('/')->withErrors(['login' => 'Akses ditolak.']);

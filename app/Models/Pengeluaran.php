@@ -17,6 +17,7 @@ class Pengeluaran extends Model
         'payment_method',
         'pic',
         'vendor',
+        'no_telepon',
         'invoice',
         'bukti_tf',
         'payment_status',

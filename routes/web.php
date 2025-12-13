@@ -14,6 +14,12 @@ use App\Http\Controllers\TarikModulController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\BonusController;
+use App\Http\Controllers\UserDashboardController;
+use App\Http\Controllers\UserEventController;
+use App\Http\Controllers\UserProfileController;
+
+
+
 
 
 use Illuminate\Support\Facades\Route;
@@ -62,8 +68,34 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 });
 
 
+Route::middleware(['auth'])->group(function () {
+
+    Route::prefix('user')->name('user.')->group(function () {
+
+        Route::get('/dashboard', [UserDashboardController::class, 'index'])
+            ->name('dashboard');
+
+        Route::get('/profile', [UserProfileController::class, 'edit'])
+            ->name('profile.edit');
+
+        Route::put('/profile', [UserProfileController::class, 'update'])
+            ->name('profile.update');
+
+        Route::get('/event/{event}', [UserEventController::class, 'show'])
+            ->name('event.show');
+    });
+});
+
+
 
 Route::middleware(['auth', 'role:project-manajer,manajer'])->group(function () {
+
+    // web.php
+    Route::get('/inventaris', [EventController::class, 'index1'])->name('inventaris.index');
+    Route::post('/inventaris', [EventController::class, 'store1'])->name('inventaris.store');
+    Route::put('/inventaris/{id}', [EventController::class, 'update1'])->name('inventaris.update');
+    Route::delete('/inventaris/{id}', [EventController::class, 'destroy1'])->name('inventaris.destroy');
+
     Route::get('/user/detail/{id}', [EventController::class, 'detail'])->name('user.detail');
     Route::get('/admin/manager-detail/{id}', [EventController::class, 'managerDetail'])
         ->name('admin.managerDetail');
@@ -112,11 +144,9 @@ Route::middleware(['auth', 'role:project-manajer,manajer'])->group(function () {
     // role
     Route::get('/role', [RoleController::class, 'index'])->name('role.index');
     Route::post('/role/store', [RoleController::class, 'store'])->name('role.store');
-
     Route::post('/role/{id}/shift/store', [RoleController::class, 'tambahShift'])->name('shift.store');
     Route::delete('/shift/{id}/delete', [RoleController::class, 'deleteShift'])->name('shift.delete');
     Route::get('/role/{id}/shifts', [EventController::class, 'getShifts']);
-
     Route::delete('/role/{id}/delete', [RoleController::class, 'deleteRole'])->name('role.delete');
 
 

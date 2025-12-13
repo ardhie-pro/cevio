@@ -11,10 +11,10 @@
 
         <hr>
 
-        <div class="card">
-            <div class="card-header bg-primary text-white">Daftar Kru</div>
+        <div class="card p-5">
+            <div class="card-header bg-primary text-white mb-5">Daftar Kru</div>
 
-            <div class="card-body p-0">
+            <div class="card-body p-0 ">
                 @php
                     function durasi($mulai, $selesai)
                     {
@@ -24,10 +24,10 @@
                     }
                 @endphp
 
-                <table class="table table-striped">
+                <table id="datatable-buttons" class="table table-striped">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>No</th>
                             <th>Nama Kru</th>
                             <th>Role</th>
                             <th>Tanggal</th>
@@ -36,7 +36,6 @@
                             <th>Durasi</th>
                             <th>Fee / Unit</th>
                             <th>Total Fee</th>
-
                         </tr>
                     </thead>
                     <tbody>
@@ -56,10 +55,6 @@
                                 <td>{{ $jam }} Jam</td>
                                 <td>Rp {{ number_format($fee, 0, ',', '.') }}</td>
                                 <td>Rp {{ number_format($total, 0, ',', '.') }}</td>
-                                <td>
-
-                                </td>
-
                             </tr>
                         @endforeach
                     </tbody>

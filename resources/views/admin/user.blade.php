@@ -204,7 +204,7 @@
         <div class="title">Informasi Akun — User</div>
 
         <div class="table-responsive mt-4">
-            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap">
+            <table class="table table-striped table-bordered dt-responsive nowrap">
                 <thead style="background:#F4C542; color:#0E2542; font-weight:700;">
                     <tr>
                         <th>No</th>

@@ -161,28 +161,45 @@
             </div>
         </div>
 
+        @php
+            $isAdmin = in_array(auth()->user()->status, ['manajer', 'project-manajer']);
+
+            $dashboardRoute = $isAdmin ? 'event.index' : 'user.dashboard';
+        @endphp
+
         <nav class="nav flex-column px-1">
-            <a class="nav-link active"
-                href="{{ route(
-                    auth()->user()->status == 'manajer'
-                        ? 'event.index'
-                        : (auth()->user()->status == 'project-manajer'
-                            ? 'event.index'
-                            : (auth()->user()->status == 'kru'
-                                ? 'kru.index'
-                                : 'event.index')),
-                ) }}">
-                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            <a class="nav-link
+        {{ request()->routeIs(['event.*', 'user.dashboard']) ? 'active' : '' }}"
+                href="{{ route($dashboardRoute) }}">
+                <i class="bi bi-speedometer2"></i> Dashboard
             </a>
+
             @if (auth()->user()->status == 'manajer')
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.user') }}">
+                    <a class="nav-link {{ request()->routeIs('admin.user') ? 'active' : '' }}"
+                        href="{{ route('admin.user') }}">
                         <i class="bi bi-people"></i> Daftar Anggota
                     </a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('role.index') }}">
+                    <a class="nav-link {{ request()->routeIs('role.*') ? 'active' : '' }}"
+                        href="{{ route('role.index') }}">
                         <i class="bi bi-people"></i> Master Role
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('bonus.*') ? 'active' : '' }}"
+                        href="{{ route('bonus.index') }}">
+                        <i class="bi bi-people"></i> Bonus JPT
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('inventaris.*') ? 'active' : '' }}"
+                        href="{{ route('inventaris.index') }}">
+                        <i class="bi bi-people"></i> Inventaris
                     </a>
                 </li>
             @endif

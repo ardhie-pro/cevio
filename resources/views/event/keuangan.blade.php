@@ -33,10 +33,10 @@
             Pengeluaran</button>
 
         <!-- ===================== CARD PEMASUKAN ====================== -->
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-success text-white fw-bold">Pemasukan</div>
+        <div class="card mb-4 shadow-sm p-5">
+            <div class="card-header bg-success text-white fw-bold mb-5">Pemasukan</div>
             <div class="card-body p-0">
-                <table class="table table-striped m-0">
+                <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap">
                     <thead class="table-light">
                         <tr>
                             <th>#</th>
@@ -93,13 +93,13 @@
         </div>
 
         <!-- ===================== CARD PENGELUARAN ====================== -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-danger text-white fw-bold">Pengeluaran</div>
+        <div class="card shadow-sm p-5">
+            <div class="card-header bg-danger text-white fw-bold mb-5">Pengeluaran</div>
             <div class="card-body p-0">
-                <table class="table table-striped m-0">
+                <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
+                            <th>No</th>
                             <th>Tanggal</th>
                             <th>Kategori</th>
                             <th>Item</th>
@@ -123,19 +123,16 @@
 
                                 <td>
                                     @if ($p->invoice)
-                                        <a href="{{ $p->invoice }}" target="_blank">Lihat</a>
-                                    @else
-                                        -
+                                        <a href="{{ Storage::url($p->invoice) }}" target="_blank">Lihat</a>
                                     @endif
                                 </td>
 
                                 <td>
                                     @if ($p->bukti_tf)
-                                        <a href="{{ $p->bukti_tf }}" target="_blank">Bukti</a>
-                                    @else
-                                        -
+                                        <a href="{{ Storage::url($p->bukti_tf) }}" target="_blank">Bukti</a>
                                     @endif
                                 </td>
+
                             </tr>
                         @endforeach
                     </tbody>
@@ -212,7 +209,7 @@
         {{-- MODAL PENGELUARAN --}}
         <div class="modal fade" id="modalPengeluaran">
             <div class="modal-dialog">
-                <form action="{{ route('event.pengeluaran', $event->id) }}" method="POST">
+                <form action="{{ route('event.pengeluaran', $event->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-content">
                         <div class="modal-header bg-danger text-white">
@@ -248,17 +245,32 @@
                             </select>
 
 
-                            <label class="mt-2">PIC</label>
-                            <input type="text" name="pic" class="form-control">
 
                             <label class="mt-2">Vendor</label>
-                            <input type="text" name="vendor" class="form-control">
+                            <select name="vendor" id="vendor" class="form-control select2">
+                                <option value="">-- Pilih / Ketik Vendor --</option>
+                                @foreach ($inventaris as $inv)
+                                    <option value="{{ $inv->vendor }}" data-telp="{{ $inv->no_telp }}"
+                                        data-pic="{{ $inv->pic }}">
+                                        {{ $inv->vendor }} - {{ $inv->pic }}
+                                    </option>
+                                @endforeach
+                            </select>
 
-                            <label class="mt-2">Link Invoice / Nota</label>
-                            <input type="text" name="invoice" class="form-control">
+                            <label class="mt-2">PIC</label>
+                            <input type="text" name="pic" id="pic" class="form-control">
 
-                            <label class="mt-2">Link Bukti Transfer</label>
-                            <input type="text" name="bukti_tf" class="form-control">
+                            <label class="mt-2">No Telepon Vendor</label>
+                            <input type="text" name="no_telp" id="no_telp" class="form-control">
+
+
+
+                            <label class="mt-2">Invoice / Nota</label>
+                            <input type="file" name="invoice" class="form-control">
+
+                            <label class="mt-2">Bukti Transfer</label>
+                            <input type="file" name="bukti_tf" class="form-control">
+
 
                             <label class="mt-2">Payment Status</label>
                             <select name="payment_status" class="form-control">
@@ -281,6 +293,24 @@
         </div>
 
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#vendor').select2({
+                tags: true,
+                dropdownParent: $('#modalPengeluaran'),
+                width: '100%',
+                placeholder: '-- Pilih / Ketik Vendor --'
+            });
+
+            $('#vendor').on('change', function() {
+                let selected = $(this).find(':selected');
+                $('#no_telp').val(selected.data('telp') ?? '');
+                $('#pic').val(selected.data('pic') ?? '');
+            });
+        });
+    </script>
+
 
     <script>
         // Show/hide bukti tf saat type = kembali

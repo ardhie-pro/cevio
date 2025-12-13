@@ -9,8 +9,11 @@ use App\Models\EventKru;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\RoleShift;
+use App\Models\InventarisModel;
+
 use PDF;
 use Illuminate\Http\Request;
+
 
 class EventController extends Controller
 {
@@ -95,7 +98,8 @@ class EventController extends Controller
     public function keuangan($id)
     {
         $event = Event::with(['pemasukan', 'pengeluaran'])->findOrFail($id);
-        return view('event.keuangan', compact('event'));
+        $inventaris = InventarisModel::orderBy('vendor')->get();
+        return view('event.keuangan', compact('event', 'inventaris'));
     }
     public function kru($id)
     {
@@ -153,26 +157,53 @@ class EventController extends Controller
 
     public function tambahPengeluaran(Request $request, $id)
     {
-        $data = $request->validate([
-            'tanggal_pembayaran' => 'required|date',
-            'kategori' => 'required',
-            'item' => 'required',
-            'deskripsi' => 'nullable',
-            'jumlah' => 'required|numeric',
-            'payment_method' => 'nullable',
-            'pic' => 'nullable',
-            'vendor' => 'nullable',
-            'invoice' => 'nullable',
-            'bukti_tf' => 'nullable',
-            'payment_status' => 'required',
+        // DEBUG (tidak menghentikan proses)
+        dump($request->all());
+
+        $data = $request->only([
+            'tanggal_pembayaran',
+            'kategori',
+            'item',
+            'deskripsi',
+            'jumlah',
+            'payment_method',
+            'vendor',
+            'no_telp',
+            'pic',
+            'payment_status',
         ]);
 
         $data['event_id'] = $id;
 
+        // 📁 Upload Invoice
+
+        $data['invoice'] = $request->file('invoice')->store('invoice', 'public');
+
+
+        // 📁 Upload Bukti TF
+
+        $data['bukti_tf'] = $request->file('bukti_tf')->store('bukti_tf', 'public');
+
+
+        // 💾 Simpan Pengeluaran
         Pengeluaran::create($data);
+
+        // 💾 Simpan / Tambah ke Inventaris
+        if ($request->vendor && $request->pic) {
+            InventarisModel::firstOrCreate(
+                [
+                    'vendor' => $request->vendor,
+                    'pic' => $request->pic
+                ],
+                [
+                    'no_telp' => $request->no_telp
+                ]
+            );
+        }
 
         return back()->with('success', 'Pengeluaran berhasil ditambahkan');
     }
+
 
 
     // public function tambahKru(Request $request, $id)
@@ -349,5 +380,40 @@ class EventController extends Controller
         ])->where('project_manager', $user->name)->get();
 
         return view('admin.manajer-detail', compact('user', 'events'));
+    }
+
+
+    public function index1()
+    {
+        $inventaris = InventarisModel::latest()->get();
+        return view('inventaris.index', compact('inventaris'));
+    }
+
+
+    public function store1(Request $request)
+    {
+        $request->validate([
+            'vendor' => 'required',
+            'pic' => 'required',
+            'no_telp' => 'nullable'
+        ]);
+
+
+        InventarisModel::create($request->all());
+        return back()->with('success', 'Inventaris berhasil ditambahkan');
+    }
+
+
+    public function update1(Request $request, $id)
+    {
+        InventarisModel::findOrFail($id)->update($request->all());
+        return back()->with('success', 'Inventaris berhasil diupdate');
+    }
+
+
+    public function destroy1($id)
+    {
+        InventarisModel::findOrFail($id)->delete();
+        return back()->with('success', 'Inventaris berhasil dihapus');
     }
 }
